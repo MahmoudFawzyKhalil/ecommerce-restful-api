@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-@ApplicationPath( "api" )
+@ApplicationPath( "api/v1" )
 public class JerseyApp extends Application {
     @Override
     public Map<String, Object> getProperties() {

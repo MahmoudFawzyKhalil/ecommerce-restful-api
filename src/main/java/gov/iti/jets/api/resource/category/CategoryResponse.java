@@ -1,21 +1,32 @@
 package gov.iti.jets.api.resource.category;
 
-import gov.iti.jets.domain.models.Category;
-import jakarta.ws.rs.core.Link;
+import jakarta.json.bind.annotation.JsonbPropertyOrder;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlType;
 
-import java.util.List;
+import java.io.Serializable;
 
-@XmlRootElement
-public class CategoryResponse {
+@XmlRootElement( name = "category" )
+@XmlType( propOrder = {"id", "name"} )
+@JsonbPropertyOrder( {"id", "name"} )
+public class CategoryResponse implements Serializable {
+    private Integer id;
     private String name;
 
     public CategoryResponse() {
     }
 
-    public CategoryResponse( Category category ) {
-        this.name = category.getName();
+    public CategoryResponse( int id, String name ) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId( Integer id ) {
+        this.id = id;
     }
 
     public String getName() {
@@ -26,21 +37,10 @@ public class CategoryResponse {
         this.name = name;
     }
 
-    private List<Link> links;
-
-    @XmlJavaTypeAdapter( Link.JaxbAdapter.class )
-    public List<Link> getLinks() {
-        return links;
-    }
-
-    public void setLinks( List<Link> links ) {
-        this.links = links;
-    }
-
     @Override
     public String toString() {
-        return "CategoryResponse[" +
-                "name='" + name + '\'' +
-                ']';
+        return getClass().getSimpleName() + "(" +
+                "id = " + id + ", " +
+                "name = " + name + ")";
     }
 }

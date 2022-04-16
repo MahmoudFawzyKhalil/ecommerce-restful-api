@@ -1,6 +1,7 @@
 package gov.iti.jets.persistence;
 
 import gov.iti.jets.domain.enums.Role;
+import gov.iti.jets.domain.models.Category;
 import gov.iti.jets.domain.models.Product;
 import gov.iti.jets.domain.models.User;
 import jakarta.persistence.EntityManager;
@@ -25,6 +26,7 @@ public class JpaUtil {
         var em = createEntityManager();
         var tx = em.getTransaction();
         tx.begin();
+        System.out.println( em.createQuery( "SELECT c.id FROM Category c", Category.class ).getResultList() );
         tx.commit();
     }
 }
