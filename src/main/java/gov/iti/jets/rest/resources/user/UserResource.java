@@ -51,7 +51,7 @@ public class UserResource {
 
 
     @POST
-    public Response createProduct( UserRequest userRequest ) {
+    public Response createUser( UserRequest userRequest ) {
         if ( userRequest == null )
             throw new ApiException( "You must provide a valid POST request body.", 400 );
 
@@ -66,18 +66,18 @@ public class UserResource {
         URI createdAtUri = ApiUtils.getCreatedAtUriForPostRequest( uriInfo, userResponse.getId() );
         return Response.created( createdAtUri ).entity( userResponse ).build();
     }
-    /*
+
     @GET
     @Path( "{id}" )
-    public Response findProductById( @PathParam( "id" ) int id ) {
-        Product product = ProductService.findProductById( id ).orElseThrow( () -> new ApiException(
-                String.format( "No product exists with the id (%s)", id ), 400 ) );
-        ProductResponse productResponse = new ProductResponse( product );
-        addLinksToProductResponse( productResponse, uriInfo );
-        return Response.ok().entity( productResponse ).build();
+    public Response findUserById( @PathParam( "id" ) int id ) {
+        User user = UserService.findUserById( id ).orElseThrow( () -> new ApiException(
+                String.format( "No user exists with the id (%s)", id ), 400 ) );
+        UserResponse userResponse = new UserResponse( user );
+        addLinksToUserResponse( userResponse, uriInfo );
+        return Response.ok().entity( userResponse ).build();
     }
 
-
+    /*
     @DELETE
     @Path( "{id}" )
     public Response deleteProduct( @PathParam( "id" ) int id ) {
