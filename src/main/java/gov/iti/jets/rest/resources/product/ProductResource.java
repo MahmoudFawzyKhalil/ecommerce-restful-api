@@ -101,4 +101,16 @@ public class ProductResource {
         addLinksToProductResponse( productResponse );
         return Response.ok( productResponse ).build();
     }
+
+
+    @DELETE
+    @Path( "{pid}/categories/{cid}" )
+    public Response deleteCategoryFromProduct( @PathParam( "pid" ) int productId,
+                                               @PathParam( "cid" ) int categoryId ) {
+        Product product = ProductService.deleteCategoryFromProduct( productId, categoryId );
+        ProductResponse productResponse = new ProductResponse( product );
+        addLinksToProductResponse( productResponse );
+        return Response.ok( productResponse ).build();
+    }
+
 }

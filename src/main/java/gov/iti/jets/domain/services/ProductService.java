@@ -122,4 +122,26 @@ public class ProductService {
             em.close();
         }
     }
+
+    public static Product deleteCategoryFromProduct( int productId, int categoryId ) {
+        var em = JpaUtil.createEntityManager();
+        var tx = em.getTransaction();
+        var pr = new ProductRepository( em );
+        var cr = new CategoryRepository( em );
+
+        try {
+            Product product = pr.findOne( productId ).orElseThrow( () ->
+                    new BusinessException( String.format( "No product exists with the id %s", productId ), 400 ) );
+            Category category = cr.findOne( categoryId ).orElseThrow( () ->
+                    new BusinessException( String.format( "No category exists with the id %s", categoryId ), 400 ) );
+
+            tx.begin();
+            product.removeCategoryFromProduct( category );
+            tx.commit();
+
+            return product;
+        } finally {
+            em.close();
+        }
+    }
 }
