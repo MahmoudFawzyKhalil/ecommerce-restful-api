@@ -1,31 +1,29 @@
 package gov.iti.jets.soap.services.dtos;
 
 import gov.iti.jets.domain.models.Product;
-import jakarta.json.bind.annotation.JsonbPropertyOrder;
 import jakarta.xml.bind.annotation.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Set;
-
-import static java.util.stream.Collectors.toSet;
 
 @XmlRootElement( name = "product" )
-@XmlType( propOrder = {"name", "description", "quantity", "price"} )
-public class ProductCreationDto implements Serializable {
+@XmlType( propOrder = {"id", "name", "description", "quantity", "price"} )
+public class ProductRequestDto implements Serializable {
+    private Integer id;
     private String name;
     private String description;
     private Integer quantity;
     private BigDecimal price;
 
-    public ProductCreationDto() {
+    public ProductRequestDto() {
     }
 
-    public ProductCreationDto( Product product ) {
-        this.name = product.getName();
-        this.description = product.getDescription();
-        this.quantity = product.getQuantity();
-        this.price = product.getPrice();
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId( Integer id ) {
+        this.id = id;
     }
 
     @XmlElement( required = true )
