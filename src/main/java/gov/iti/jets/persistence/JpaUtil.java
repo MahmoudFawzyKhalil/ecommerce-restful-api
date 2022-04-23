@@ -21,12 +21,7 @@ public class JpaUtil {
         return emf.createEntityManager();
     }
 
-    public static void main( String[] args ) {
-
-        var em = createEntityManager();
-        var tx = em.getTransaction();
-        tx.begin();
-        System.out.println( em.createQuery( "SELECT c.id FROM Category c", Category.class ).getResultList() );
-        tx.commit();
+    public static void closeEntityManagerFactory() {
+        emf.close();
     }
 }

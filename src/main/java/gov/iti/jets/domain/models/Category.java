@@ -2,6 +2,8 @@ package gov.iti.jets.domain.models;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,17 +13,21 @@ public class Category {
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private int id;
+    @NotEmpty( message = "Please provide a name for the category." )
     private String name;
     @ManyToMany( mappedBy = "categories" )
-    private Set<Product> products;
+    private Set<Product> products = new HashSet<>();
+
+    public Category() {
+    }
 
     public Category( String name ) {
         this.name = name;
-        this.products = new HashSet<>();
     }
 
-    public Category() {
-        this.products = new HashSet<>();
+    public Category( Integer id, String name ) {
+        this.id = id;
+        this.name = name;
     }
 
     public int getId() {
@@ -50,10 +56,6 @@ public class Category {
 
     @Override
     public String toString() {
-        return "Category{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", products=" + products.size() +
-                '}';
+        return "Category{" + "id=" + id + ", name='" + name + '\'' + ", products=" + products.size() + '}';
     }
 }

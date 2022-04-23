@@ -1,9 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
-    <title>☕ Jersey ECommerce API</title>
+    <title>☕ REST and SOAP Web Services</title>
 </head>
 <body>
-<h1 style="text-align: center; color: lightblue;">☕ Jersey ECommerce API</h1>
+<h1 style="text-align: center; color: lightblue;">☕ REST and SOAP Web Services</h1>
 </body>
 </html>

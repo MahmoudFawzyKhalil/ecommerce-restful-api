@@ -1,8 +1,8 @@
 package gov.iti.jets.persistence;
 
-import gov.iti.jets.api.resource.category.CategoryFilters;
-import gov.iti.jets.api.resource.category.CategoryResponse;
-import gov.iti.jets.api.beans.PaginationData;
+import gov.iti.jets.rest.resources.category.CategoryFilters;
+import gov.iti.jets.rest.resources.category.CategoryResponse;
+import gov.iti.jets.rest.beans.PaginationData;
 import gov.iti.jets.domain.models.Category;
 import jakarta.persistence.EntityManager;
 
@@ -16,7 +16,7 @@ public class CategoryRepository extends AbstractRepository<Category> {
 
     public List<CategoryResponse> findCategoryResponses( PaginationData pagination, CategoryFilters filters ) {
         return entityManager.createQuery(
-                        "SELECT new gov.iti.jets.api.resource.category.CategoryResponse (c.id, c.name) " +
+                        "SELECT new gov.iti.jets.rest.resources.category.CategoryResponse (c.id, c.name) " +
                                 "FROM Category c " +
                                 "WHERE c.name LIKE :name " +
                                 "ORDER BY c.id",

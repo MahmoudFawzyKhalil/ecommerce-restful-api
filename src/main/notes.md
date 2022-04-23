@@ -27,70 +27,67 @@
 /categories 
 
 # 2 URLs and Methods
+
+## categories
+/categories
+xGET: returns all categories
+xPOST: adds a new category
+
+/categories/{id}
+xGET: returns that particular category
+xPUT: updates the category if it exists, otherwise adds it
+xDELETE: deletes the categories
+
+/categories/{id}/products
+xGET: view all products for that given id
+
+## products
 /products
-    xGET: returns paginated products [x]
-    xPOST: adds a new product [x]
+    xGET: returns paginated products 
+    xPOST: adds a new product
 
 /products/{id}
-    xGET: returns that particular product [x]
+    xGET: returns that particular product
     xPUT: updates that particular product if it exists, otherwise adds it 
-    xDELETE: deletes the product [x]
+    xDELETE: deletes the product
 
 /products/{id}/categories
     <!-- xGET: gets all categories for that product -->
-    xPOST: adds a new category for that product [x]
+    xPOST: adds a new category for that product
 
 /products/{id}/categories/{id}
-    xDELETE: deletes that category from that product [x]
+    xDELETE: deletes that category from that product
 
 **/products search**
 /products?q="search+string"
-    GET: searches for that string in the product name, description, and categories [x]
+    GET: searches for that string in the product name, description, and categories
 
---------------------------------------------------------
-
-/categories
-    xGET: returns all categories [x]
-    xPOST: adds a new category [x]
-
-/categories/{id}
-    xGET: returns that particular category [x]
-    xPUT: updates the category if it exists, otherwise adds it [x]
-    xDELETE: deletes the category [x]
-
-    xGET: view all products for that given id [x]
-
---------------------------------------------------------
-
-/clerks
-    xGET
-    xPOST
-
-/clerks/{id}
-    xGET
-    xPUT
-    xDELETE
-
---------------------------------------------------------
-
+## customers
 /customers
-    xGET
-    xPOST
+    GET
+    POST
 
 /customers/{id}
-    xGET
-    xPUT
-    xDELETE
+    GET
+    PUT
+    DELETE
+
+/customers/{id}/cart
+    POST: add an item to that customer's shopping cart (create the cart if it doesn't exist)
+    DELETE: empty that customer's shopping cart
+    GET: get the contents of that customer's shopping cart
 
 /customers/{id}/orders
-    xGET
-    xPOST
+    GET: get all orders for that customer
+    POST: create a new order from that customer's shopping cart if it's not empty, then empty it
 
 /customers/{id}/orders/{id}
-    xGET
-    xPUT: create or update an order, change order status, approve order, cancel order
+    GET: get that particular order
+    PATCH: update order status
 
---------------------------------------------------------
-
+## orders
 /orders
-    xGET: get all orders paginated
+    GET: get all orders paginated
+    
+/orders/{id}
+    GET: get that particular order
