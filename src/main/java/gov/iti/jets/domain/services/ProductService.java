@@ -167,4 +167,15 @@ public class ProductService {
             em.close();
         }
     }
+
+    public static Optional<Product> findCategoryById( int id ) {
+        var em = JpaUtil.createEntityManager();
+        var pr = new ProductRepository( em );
+
+        try {
+            return pr.findOne( id );
+        } finally {
+            em.close();
+        }
+    }
 }

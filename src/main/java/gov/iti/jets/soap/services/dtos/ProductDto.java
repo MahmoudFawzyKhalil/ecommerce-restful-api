@@ -23,7 +23,6 @@ import static java.util.stream.Collectors.toSet;
 
 @XmlRootElement( name = "product" )
 @XmlType( propOrder = {"id", "name", "description", "quantity", "price", "categories"} )
-@JsonbPropertyOrder( {"id", "name", "description", "quantity", "price", "categories"} )
 public class ProductDto implements Serializable {
     private Integer id;
     private String name;
