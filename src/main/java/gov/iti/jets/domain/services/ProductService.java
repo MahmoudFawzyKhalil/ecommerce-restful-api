@@ -9,6 +9,7 @@ import gov.iti.jets.rest.beans.PaginationData;
 import gov.iti.jets.rest.resources.product.ProductFilters;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ProductService {
 
@@ -48,6 +49,21 @@ public class ProductService {
             tx.rollback();
             throw new BusinessException( String.format( "Failed to create product: %s. " +
                     "Please try again later.", product.getName() ), e, 500 );
+        } finally {
+            em.close();
+        }
+    }
+
+    public static Optional<Product> findProductById( int id ) {
+        var em = JpaUtil.createEntityManager();
+
+        try {
+            var pr = new ProductRepository( em );
+            return pr.findOne( id );
+        } catch ( RuntimeException e ) {
+            e.printStackTrace();
+            throw new BusinessException( String.format( "Failed to find category with id: %s. " +
+                    "Please try again later.", id ), e, 500 );
         } finally {
             em.close();
         }

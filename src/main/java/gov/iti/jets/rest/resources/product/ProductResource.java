@@ -3,6 +3,7 @@ package gov.iti.jets.rest.resources.product;
 import gov.iti.jets.domain.models.Product;
 import gov.iti.jets.domain.services.ProductService;
 import gov.iti.jets.rest.beans.PaginationData;
+import gov.iti.jets.rest.exceptions.ApiException;
 import gov.iti.jets.rest.resources.category.*;
 import gov.iti.jets.rest.utils.ApiUtils;
 import jakarta.ws.rs.*;
@@ -54,7 +55,7 @@ public class ProductResource {
     public Response createProduct( ProductRequest productRequest ) {
         ProductValidator.validate( productRequest );
 
-        System.out.println(productRequest);
+        System.out.println( productRequest );
 
         Product product = new Product( productRequest.getName(),
                 productRequest.getDescription(),
@@ -71,20 +72,17 @@ public class ProductResource {
         return Response.created( createdAtUri ).entity( productResponse ).build();
     }
 
-/*
     @GET
     @Path( "{id}" )
     public Response findCategoryById( @PathParam( "id" ) int id ) {
-        Category category = CategoryService.findCategoryById( id ).orElseThrow( () -> new ApiException(
-                String.format( "No category exists with the id (%s)", id ), 400 ) );
-        CategoryResponse categoryResponse = new CategoryResponse( category );
-        addLinksToCategoryResponseWithIdPathParam( categoryResponse );
-        return Response.ok().entity( categoryResponse ).build();
+        Product product = ProductService.findProductById( id ).orElseThrow( () -> new ApiException(
+                String.format( "No product exists with the id (%s)", id ), 400 ) );
+        ProductResponse productResponse = new ProductResponse( product );
+        addLinksToProductResponse( productResponse );
+        return Response.ok().entity( productResponse ).build();
     }
 
-    private void addLinksToCategoryResponseWithIdPathParam( CategoryResponse categoryResponse ) {
-        categoryResponse.addLink( ApiUtils.createSelfLink( uriInfo ) );
-    }
+    /*
 
     @DELETE
     @Path( "{id}" )
