@@ -81,4 +81,18 @@ public class UserManagement {
         var cart = UserService.addItemToUserCart( userId, dto.getProductId(), dto.getQuantity() );
         return new CartDto( cart );
     }
+
+    @WebMethod
+    @Oneway
+    public void clearUserCart( @WebParam( name = "userId" ) int userId ) {
+        UserService.clearUserCart( userId );
+    }
+
+/*    @WebMethod
+    @WebResult( name = "cart" )
+    public CartDto addItemToUserCart( @WebParam( name = "userId" ) int userId, @WebParam( name = "cartLineItem" ) CartLineItemRequestDto dto ) {
+        var cart = UserService.addItemToUserCart( userId, dto.getProductId(), dto.getQuantity() );
+        return new CartDto( cart );
+    }*/
+
 }
