@@ -28,21 +28,14 @@ public class ProductResource {
     public Response getAllProducts( @BeanParam PaginationData paginationData,
                                     @BeanParam ProductFilters filters,
                                     @QueryParam( "fields" ) List<String> fieldsWanted ) {
-
         List<Product> products = ProductService.findProducts( paginationData, filters );
-
         List<ProductResponse> productResponses = products.stream()
                 .map( ProductResponse::new )
                 .collect( toList() );
-
         productResponses.forEach( this::addLinksToProductResponse );
-
         ApiUtils.nullifyListFieldsForPartialResponse( productResponses, fieldsWanted, ProductResponse.class );
-
         List<Link> links = ApiUtils.createPaginatedResourceLinks( uriInfo, paginationData, ProductService.getNumberOfCategories() );
-
         ProductResponseWrapper productResponseWrapper = new ProductResponseWrapper( productResponses, links );
-
         return Response.ok().entity( productResponseWrapper ).build();
     }
 
@@ -54,21 +47,15 @@ public class ProductResource {
     @POST
     public Response createProduct( ProductRequest productRequest ) {
         ProductValidator.validate( productRequest );
-
         System.out.println( productRequest );
-
         Product product = new Product( productRequest.getName(),
                 productRequest.getDescription(),
                 productRequest.getQuantity(),
                 productRequest.getPrice() );
-
         ProductService.createProduct( product );
-
         ProductResponse productResponse = new ProductResponse( product );
         addLinksToProductResponse( productResponse );
-
         URI createdAtUri = ApiUtils.getCreatedAtUriForPostRequest( uriInfo, productResponse.getId() );
-
         return Response.created( createdAtUri ).entity( productResponse ).build();
     }
 
@@ -94,20 +81,24 @@ public class ProductResource {
     @Path( "{id}" )
     public Response updateProduct( @PathParam( "id" ) int id, ProductRequest productRequest ) {
         ProductValidator.validate( productRequest );
-
         Product product = new Product( productRequest.getName(),
                 productRequest.getDescription(),
                 productRequest.getQuantity(),
                 productRequest.getPrice() );
-
         product.setId( id );
-
         ProductService.updateProduct( product );
-
         ProductResponse productResponse = new ProductResponse( product );
-
         addLinksToProductResponse( productResponse );
-
         return Response.ok().entity( productResponse ).build();
+    }
+
+    @POST
+    @Path( "{pid}/categories/{cid}" )
+    public Response addCategoryToProduct( @PathParam( "pid" ) int productId,
+                                          @PathParam( "cid" ) int categoryId ) {
+        Product product = ProductService.addCategoryToProduct( productId, categoryId );
+        ProductResponse productResponse = new ProductResponse( product );
+        addLinksToProductResponse( productResponse );
+        return Response.ok( productResponse ).build();
     }
 }

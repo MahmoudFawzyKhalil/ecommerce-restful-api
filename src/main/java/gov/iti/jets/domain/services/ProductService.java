@@ -1,6 +1,7 @@
 package gov.iti.jets.domain.services;
 
 import gov.iti.jets.domain.exceptions.BusinessException;
+import gov.iti.jets.domain.models.Category;
 import gov.iti.jets.domain.models.Product;
 import gov.iti.jets.persistence.CategoryRepository;
 import gov.iti.jets.persistence.JpaUtil;
@@ -95,6 +96,28 @@ public class ProductService {
                 pr.update( updatedProduct );
             }, () -> pr.update( updatedProduct ) );
             tx.commit();
+        } finally {
+            em.close();
+        }
+    }
+
+    public static Product addCategoryToProduct( int productId, int categoryId ) {
+        var em = JpaUtil.createEntityManager();
+        var tx = em.getTransaction();
+        var pr = new ProductRepository( em );
+        var cr = new CategoryRepository( em );
+
+        try {
+            Product product = pr.findOne( productId ).orElseThrow( () ->
+                    new BusinessException( String.format( "No product exists with the id %s", productId ), 400 ) );
+            Category category = cr.findOne( categoryId ).orElseThrow( () ->
+                    new BusinessException( String.format( "No category exists with the id %s", categoryId ), 400 ) );
+
+            tx.begin();
+            product.addCategoryToProduct( category );
+            tx.commit();
+
+            return product;
         } finally {
             em.close();
         }
