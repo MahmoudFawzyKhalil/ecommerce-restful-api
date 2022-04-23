@@ -82,4 +82,21 @@ public class ProductService {
             em.close();
         }
     }
+
+    public static void updateProduct( Product updatedProduct ) {
+        var em = JpaUtil.createEntityManager();
+        var tx = em.getTransaction();
+
+        try {
+            tx.begin();
+            var pr = new ProductRepository( em );
+            pr.findOne( updatedProduct.getId() ).ifPresentOrElse( ( p ) -> {
+                updatedProduct.setCategories( p.getCategories() );
+                pr.update( updatedProduct );
+            }, () -> pr.update( updatedProduct ) );
+            tx.commit();
+        } finally {
+            em.close();
+        }
+    }
 }

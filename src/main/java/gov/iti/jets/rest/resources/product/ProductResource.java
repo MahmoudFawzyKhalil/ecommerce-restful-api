@@ -74,7 +74,7 @@ public class ProductResource {
 
     @GET
     @Path( "{id}" )
-    public Response findCategoryById( @PathParam( "id" ) int id ) {
+    public Response findProductById( @PathParam( "id" ) int id ) {
         Product product = ProductService.findProductById( id ).orElseThrow( () -> new ApiException(
                 String.format( "No product exists with the id (%s)", id ), 400 ) );
         ProductResponse productResponse = new ProductResponse( product );
@@ -85,27 +85,29 @@ public class ProductResource {
 
     @DELETE
     @Path( "{id}" )
-    public Response deleteCategory( @PathParam( "id" ) int id ) {
+    public Response deleteProduct( @PathParam( "id" ) int id ) {
         ProductService.deleteProduct( id );
         return Response.noContent().build();
     }
 
-    /*
     @PUT
     @Path( "{id}" )
-    public Response updateCategory( @PathParam( "id" ) int id, CategoryRequest categoryRequest ) {
-        CategoryValidator.ensureCategoryRequestIsValid( categoryRequest );
+    public Response updateProduct( @PathParam( "id" ) int id, ProductRequest productRequest ) {
+        ProductValidator.validate( productRequest );
 
-        Category category = new Category( categoryRequest.getName() );
-        category.setId( id );
+        Product product = new Product( productRequest.getName(),
+                productRequest.getDescription(),
+                productRequest.getQuantity(),
+                productRequest.getPrice() );
 
-        CategoryService.updateCategory( category );
+        product.setId( id );
 
-        CategoryResponse categoryResponse = new CategoryResponse( category.getId(), category.getName() );
+        ProductService.updateProduct( product );
 
-        addLinksToCategoryResponseWithIdPathParam( categoryResponse );
+        ProductResponse productResponse = new ProductResponse( product );
 
-        return Response.ok().entity( categoryResponse ).build();
+        addLinksToProductResponse( productResponse );
+
+        return Response.ok().entity( productResponse ).build();
     }
-     */
 }
