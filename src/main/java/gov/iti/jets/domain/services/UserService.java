@@ -66,4 +66,18 @@ public class UserService {
             em.close();
         }
     }
+
+    public static void deleteUser( int id ) {
+        var em = JpaUtil.createEntityManager();
+        var tx = em.getTransaction();
+
+        try {
+            tx.begin();
+            var ur = new UserRepository( em );
+            ur.deleteById( id );
+            tx.commit();
+        } finally {
+            em.close();
+        }
+    }
 }

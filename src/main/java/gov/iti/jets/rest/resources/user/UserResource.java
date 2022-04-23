@@ -77,14 +77,14 @@ public class UserResource {
         return Response.ok().entity( userResponse ).build();
     }
 
-    /*
     @DELETE
     @Path( "{id}" )
-    public Response deleteProduct( @PathParam( "id" ) int id ) {
-        ProductService.deleteProduct( id );
+    public Response deleteUser( @PathParam( "id" ) int id ) {
+        UserService.deleteUser( id );
         return Response.noContent().build();
     }
 
+    /*
     @PUT
     @Path( "{id}" )
     public Response updateProduct( @PathParam( "id" ) int id, ProductRequest productRequest ) {
