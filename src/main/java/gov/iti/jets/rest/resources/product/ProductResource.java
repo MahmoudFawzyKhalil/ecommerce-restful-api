@@ -82,15 +82,15 @@ public class ProductResource {
         return Response.ok().entity( productResponse ).build();
     }
 
-    /*
 
     @DELETE
     @Path( "{id}" )
     public Response deleteCategory( @PathParam( "id" ) int id ) {
-        CategoryService.deleteCategory( id );
+        ProductService.deleteProduct( id );
         return Response.noContent().build();
     }
 
+    /*
     @PUT
     @Path( "{id}" )
     public Response updateCategory( @PathParam( "id" ) int id, CategoryRequest categoryRequest ) {

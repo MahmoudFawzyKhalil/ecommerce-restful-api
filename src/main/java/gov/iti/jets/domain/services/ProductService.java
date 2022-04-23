@@ -68,4 +68,18 @@ public class ProductService {
             em.close();
         }
     }
+
+    public static void deleteProduct( int id ) {
+        var em = JpaUtil.createEntityManager();
+        var tx = em.getTransaction();
+
+        try {
+            tx.begin();
+            var pr = new ProductRepository( em );
+            pr.deleteById( id );
+            tx.commit();
+        } finally {
+            em.close();
+        }
+    }
 }
