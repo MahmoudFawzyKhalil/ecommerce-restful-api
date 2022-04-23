@@ -5,10 +5,7 @@ import gov.iti.jets.domain.services.UserService;
 import gov.iti.jets.rest.exceptions.ApiException;
 import gov.iti.jets.rest.resources.cart.CartResponse;
 import gov.iti.jets.soap.exceptions.SOAPApiException;
-import gov.iti.jets.soap.services.dtos.CartDto;
-import gov.iti.jets.soap.services.dtos.CartLineItemRequestDto;
-import gov.iti.jets.soap.services.dtos.UserDto;
-import gov.iti.jets.soap.services.dtos.UserRequestDto;
+import gov.iti.jets.soap.services.dtos.*;
 import jakarta.jws.*;
 import jakarta.ws.rs.core.Response;
 import jakarta.xml.ws.BindingType;
@@ -16,6 +13,8 @@ import jakarta.xml.ws.soap.SOAPBinding;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 
 @SuppressWarnings( "NonJaxWsWebServices" )
@@ -38,7 +37,7 @@ public class UserManagement {
         return UserService.getAllUsers()
                 .stream()
                 .map( UserDto::new )
-                .collect( Collectors.toList() );
+                .collect( toList() );
     }
 
     @WebMethod
@@ -88,11 +87,12 @@ public class UserManagement {
         UserService.clearUserCart( userId );
     }
 
-/*    @WebMethod
-    @WebResult( name = "cart" )
-    public CartDto addItemToUserCart( @WebParam( name = "userId" ) int userId, @WebParam( name = "cartLineItem" ) CartLineItemRequestDto dto ) {
-        var cart = UserService.addItemToUserCart( userId, dto.getProductId(), dto.getQuantity() );
-        return new CartDto( cart );
-    }*/
+    @WebMethod
+    @WebResult( name = "order" )
+    public List<OrderDto> getOrdersByUserId( @WebParam( name = "userId" ) int userId ) {
+        return UserService.getOrdersByUserId( userId ).stream()
+                .map( OrderDto::new )
+                .collect( toList() );
+    }
 
 }
