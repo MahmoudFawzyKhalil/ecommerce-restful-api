@@ -17,15 +17,19 @@ public class Product {
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private int id;
+
     @NotEmpty( message = "you must provide a name for the product." )
     private String name;
+
     private String description;
     @Min( message = "you must provide a zero or positive quantity.", value = 0 )
     @NotNull( message = "you must provide a quantity." )
     private int quantity;
+
     @DecimalMin( message = "you must provide a positive price value.", value = "0.01" )
     @NotNull( message = "you must provide a price." )
     private BigDecimal price;
+
     @ManyToMany( fetch = FetchType.EAGER )
     private Set<Category> categories = new HashSet<>();
 

@@ -1,9 +1,15 @@
 package gov.iti.jets.rest.resources.user;
 
+import gov.iti.jets.domain.models.Cart;
 import gov.iti.jets.domain.models.User;
 import gov.iti.jets.domain.services.UserService;
 import gov.iti.jets.rest.beans.PaginationData;
 import gov.iti.jets.rest.exceptions.ApiException;
+import gov.iti.jets.rest.resources.cart.CartLineItemRequest;
+import gov.iti.jets.rest.resources.cart.CartResponse;
+import gov.iti.jets.rest.resources.order.OrderResource;
+import gov.iti.jets.rest.resources.order.OrderResponse;
+import gov.iti.jets.rest.resources.order.OrderResponseWrapper;
 import gov.iti.jets.rest.utils.ApiUtils;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -102,28 +108,47 @@ public class UserResource {
         return Response.ok().entity( userResponse ).build();
     }
 
-        /*
+
+    @GET
+    @Path( "{id}/cart" )
+    public Response getCartByUserId( @PathParam( "id" ) int id ) {
+        CartResponse cartResponse = UserService.findCartByUserId( id ).map( CartResponse::new ).orElseThrow( () ->
+                new ApiException( String.format( "No user exists with the id (%s)", id ), 400 ) );
+        addLinksToCartResponse( cartResponse, uriInfo );
+        return Response.ok().entity( cartResponse ).build();
+    }
+
+    public static void addLinksToCartResponse( CartResponse cartResponse, UriInfo uriInfo ) {
+        cartResponse.addLink( ApiUtils.createAbsoluteSelfLink( uriInfo ) );
+    }
 
     @POST
-    @Path( "{pid}/categories/{cid}" )
-    public Response addCategoryToProduct( @PathParam( "pid" ) int productId,
-                                          @PathParam( "cid" ) int categoryId ) {
-        Product product = ProductService.addCategoryToProduct( productId, categoryId );
-        ProductResponse productResponse = new ProductResponse( product );
-        addLinksToProductResponse( productResponse, uriInfo );
-        return Response.ok( productResponse ).build();
+    @Path( "{id}/cart" )
+    public Response addItemToCart( @PathParam( "id" ) int userId, CartLineItemRequest cartLineItemRequest ) {
+        Cart cart = UserService.addItemToUserCart( userId, cartLineItemRequest.getProductId(), cartLineItemRequest.getQuantity() );
+        CartResponse cartResponse = new CartResponse( cart );
+        addLinksToCartResponse( cartResponse, uriInfo );
+        return Response.ok().entity( cartResponse ).build();
     }
-
 
     @DELETE
-    @Path( "{pid}/categories/{cid}" )
-    public Response deleteCategoryFromProduct( @PathParam( "pid" ) int productId,
-                                               @PathParam( "cid" ) int categoryId ) {
-        Product product = ProductService.deleteCategoryFromProduct( productId, categoryId );
-        ProductResponse productResponse = new ProductResponse( product );
-        addLinksToProductResponse( productResponse, uriInfo );
-        return Response.ok( productResponse ).build();
+    @Path( "{id}/cart" )
+    public Response clearShoppingCart( @PathParam( "id" ) int userId ) {
+        UserService.clearUserCart( userId );
+        return Response.noContent().build();
     }
-    */
 
+    @GET
+    @Path( "{id}/orders" )
+    public Response getOrdersByUserId( @PathParam( "id" ) int userId ) {
+
+        List<OrderResponse> orders = UserService.getOrdersByUserId( userId ).stream()
+                .map( OrderResponse::new )
+                .collect( toList() );
+
+        OrderResponseWrapper orderResponseWrapper = new OrderResponseWrapper( orders,
+                List.of( ApiUtils.createAbsoluteSelfLink( uriInfo ) ) );
+
+        return Response.ok().entity( orderResponseWrapper ).build();
+    }
 }

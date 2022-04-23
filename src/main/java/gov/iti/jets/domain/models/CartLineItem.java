@@ -2,6 +2,8 @@ package gov.iti.jets.domain.models;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 public class CartLineItem {
 
@@ -56,6 +58,19 @@ public class CartLineItem {
 
     public void setQuantity( int quantity ) {
         this.quantity = quantity;
+    }
+
+    @Override
+    public boolean equals( Object o ) {
+        if ( this == o ) return true;
+        if ( o == null || getClass() != o.getClass() ) return false;
+        CartLineItem that = (CartLineItem) o;
+        return product.equals( that.product );
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash( product );
     }
 
     @Override
