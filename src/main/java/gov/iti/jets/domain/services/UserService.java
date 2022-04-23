@@ -6,6 +6,7 @@ import gov.iti.jets.domain.models.CartLineItem;
 import gov.iti.jets.domain.models.Order;
 import gov.iti.jets.domain.models.User;
 import gov.iti.jets.persistence.JpaUtil;
+import gov.iti.jets.persistence.OrderRepository;
 import gov.iti.jets.persistence.ProductRepository;
 import gov.iti.jets.persistence.UserRepository;
 import gov.iti.jets.rest.beans.PaginationData;
@@ -171,6 +172,36 @@ public class UserService {
             tx.commit();
 
             return orders;
+        } finally {
+            em.close();
+        }
+    }
+
+    public static Order createOrderFromUserCart( int userId ) {
+        var em = JpaUtil.createEntityManager();
+
+        try {
+            var tx = em.getTransaction();
+            var ur = new UserRepository( em );
+            var or = new OrderRepository( em );
+            tx.begin();
+
+
+            User user = ur.findOne( userId )
+                    .orElseThrow( () -> new BusinessException( "No user exists with the id " + userId, 400 ) );
+
+
+            if ( user.getCart().getLineItems().isEmpty() )
+                throw new BusinessException( "Can't create an order from an empty shopping cart.", 400 );
+
+            Order order = new Order( user );
+
+            or.create( order );
+
+            user.getCart().empty();
+
+            tx.commit();
+            return order;
         } finally {
             em.close();
         }

@@ -1,6 +1,7 @@
 package gov.iti.jets.rest.resources.user;
 
 import gov.iti.jets.domain.models.Cart;
+import gov.iti.jets.domain.models.Order;
 import gov.iti.jets.domain.models.User;
 import gov.iti.jets.domain.services.UserService;
 import gov.iti.jets.rest.beans.PaginationData;
@@ -150,5 +151,14 @@ public class UserResource {
                 List.of( ApiUtils.createAbsoluteSelfLink( uriInfo ) ) );
 
         return Response.ok().entity( orderResponseWrapper ).build();
+    }
+
+    @POST
+    @Path( "{id}/orders" )
+    public Response createOrderFromUserCart( @PathParam( "id" ) int userId ) {
+        Order order = UserService.createOrderFromUserCart( userId );
+        OrderResponse orderResponse = new OrderResponse( order );
+        orderResponse.setLinks( null );
+        return Response.ok().entity( orderResponse ).build();
     }
 }
