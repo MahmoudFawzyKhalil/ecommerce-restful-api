@@ -23,19 +23,23 @@ public class CategoryResource {
 
         List<CategoryResponse> categoryResponses = CategoryService.findCategoryResponses( paginationData, filters );
 
-        categoryResponses.forEach( this::addLinksToCategoryResponseWithoutIdPathParam );
+        categoryResponses.forEach( this::addLinksToCategoryResponse );
 
         ApiUtils.nullifyListFieldsForPartialResponse( categoryResponses, fieldsWanted, CategoryResponse.class );
 
-        List<Link> links = ApiUtils.createGetAllPaginatedResourceLinks( uriInfo, paginationData, CategoryService.getNumberOfCategories() );
+        List<Link> links = ApiUtils.createPaginatedResourceLinks( uriInfo, paginationData, CategoryService.getNumberOfCategories() );
 
         CategoryResponseWrapper categoryResponseWrapper = new CategoryResponseWrapper( categoryResponses, links );
 
         return Response.ok().entity( categoryResponseWrapper ).build();
     }
 
-    private void addLinksToCategoryResponseWithoutIdPathParam( CategoryResponse categoryResponse ) {
-        categoryResponse.addLink( ApiUtils.createSelfLinkForResponseWithoutIdPathParam( uriInfo, categoryResponse.getId() ) );
+    private void addLinksToCategoryResponse( CategoryResponse categoryResponse ) {
+        addLinksToCategoryResponse( categoryResponse, uriInfo );
+    }
+
+    public static void addLinksToCategoryResponse( CategoryResponse categoryResponse, UriInfo uriInfo ) {
+        categoryResponse.addLink( ApiUtils.createSelfLink( uriInfo, categoryResponse.getId(), CategoryResource.class ) );
     }
 
     @POST
@@ -47,7 +51,7 @@ public class CategoryResource {
         CategoryService.createNewCategory( category );
 
         CategoryResponse categoryResponse = new CategoryResponse( category.getId(), category.getName() );
-        addLinksToCategoryResponseWithoutIdPathParam( categoryResponse );
+        addLinksToCategoryResponse( categoryResponse );
 
         URI createdAtUri = ApiUtils.getCreatedAtUriForPostRequest( uriInfo, categoryResponse.getId() );
 
@@ -60,12 +64,8 @@ public class CategoryResource {
         Category category = CategoryService.findCategoryById( id ).orElseThrow( () -> new ApiException(
                 String.format( "No category exists with the id (%s)", id ), 400 ) );
         CategoryResponse categoryResponse = new CategoryResponse( category );
-        addLinksToCategoryResponseWithIdPathParam( categoryResponse );
+        addLinksToCategoryResponse( categoryResponse );
         return Response.ok().entity( categoryResponse ).build();
-    }
-
-    private void addLinksToCategoryResponseWithIdPathParam( CategoryResponse categoryResponse ) {
-        categoryResponse.addLink( ApiUtils.createSelfLink( uriInfo ) );
     }
 
     @DELETE
@@ -87,7 +87,7 @@ public class CategoryResource {
 
         CategoryResponse categoryResponse = new CategoryResponse( category.getId(), category.getName() );
 
-        addLinksToCategoryResponseWithIdPathParam( categoryResponse );
+        addLinksToCategoryResponse( categoryResponse );
 
         return Response.ok().entity( categoryResponse ).build();
     }

@@ -55,6 +55,25 @@ public class ApiUtils {
         }
     }
 
+    public static List<Link> createPaginatedResourceLinks( UriInfo uriInfo, PaginationData paginationData, long numberOfRecords ) {
+
+        Link self = createAbsoluteSelfLink( uriInfo );
+        Optional<Link> nextPage = createNextPageLink( uriInfo, paginationData, numberOfRecords );
+        Optional<Link> previousPage = createPreviousPageLink( uriInfo, paginationData );
+
+        List<Link> links = new ArrayList<>();
+
+        links.add( self );
+        nextPage.ifPresent( links::add );
+        previousPage.ifPresent( links::add );
+
+        return links;
+    }
+
+    public static Link createAbsoluteSelfLink( UriInfo uriInfo ) {
+        return Link.fromUriBuilder( uriInfo.getAbsolutePathBuilder() ).rel( "self" ).build();
+    }
+
     public static Optional<Link> createNextPageLink( UriInfo uriInfo, PaginationData paginationData, long numberOfRecords ) {
         int nextOffset = paginationData.getOffset() + paginationData.getLimit();
 
@@ -83,26 +102,23 @@ public class ApiUtils {
                 .build() );
     }
 
-    public static Link createSelfLink( UriInfo uriInfo ) {
-        return Link.fromUriBuilder( uriInfo.getAbsolutePathBuilder() ).rel( "self" ).build();
-    }
-
-    public static List<Link> createGetAllPaginatedResourceLinks( UriInfo uriInfo, PaginationData paginationData, long numberOfRecords ) {
-
-        Link self = createSelfLink( uriInfo );
-        Optional<Link> nextPage = createNextPageLink( uriInfo, paginationData, numberOfRecords );
-        Optional<Link> previousPage = createPreviousPageLink( uriInfo, paginationData );
-
-        List<Link> links = new ArrayList<>();
-
-        links.add( self );
-        nextPage.ifPresent( links::add );
-        previousPage.ifPresent( links::add );
-
-        return links;
-    }
-
     public static Link createSelfLinkForResponseWithoutIdPathParam( UriInfo uriInfo, int id ) {
         return Link.fromUriBuilder( uriInfo.getAbsolutePathBuilder().path( String.valueOf( id ) ) ).rel( "self" ).build();
+    }
+
+    public static <T> Link createSelfLinkForResponseNestedCollection( UriInfo uriInfo, Integer id, Class<T> resourceClass ) {
+        return Link.fromUriBuilder( uriInfo.getBaseUriBuilder()
+                        .path( resourceClass )
+                        .path( String.valueOf( id ) ) )
+                .rel( "self" )
+                .build();
+    }
+
+    public static <T> Link createSelfLink( UriInfo uriInfo, int id, Class<T> resourceClass ) {
+        return Link.fromUriBuilder( uriInfo.getBaseUriBuilder()
+                        .path( resourceClass )
+                        .path( String.valueOf( id ) ) )
+                .rel( "self" )
+                .build();
     }
 }

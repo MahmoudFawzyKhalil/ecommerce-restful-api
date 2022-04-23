@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@XmlRootElement // TODO remove annotations
 @JsonbPropertyOrder( {"id", "name", "description", "price", "categories"} )
 public class Product {
 
@@ -75,8 +74,6 @@ public class Product {
         this.price = price;
     }
 
-//    @XmlElementWrapper( name = "categories" ) // TODO remove annotations
-//    @XmlElement( name = "category" )
     @XmlTransient
     public Set<Category> getCategories() {
         return categories;
