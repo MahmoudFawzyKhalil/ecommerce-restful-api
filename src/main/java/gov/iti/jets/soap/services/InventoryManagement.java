@@ -104,4 +104,25 @@ public class InventoryManagement {
     }
 
 
+    @WebMethod
+    @WebResult( name = "product" )
+    public void deleteProduct( @WebParam( name = "id" ) int id ) {
+        ProductService.deleteProduct( id );
+    }
+
+    @WebMethod
+    @WebResult( name = "product" )
+    public ProductDto addCategoryToProduct( @WebParam( name = "productId" ) int productId,
+                                            @WebParam( name = "categoryId" ) int categoryId ) {
+        Product product = ProductService.addCategoryToProduct( productId, categoryId );
+        return new ProductDto( product );
+    }
+
+    @WebMethod
+    @WebResult( name = "product" )
+    public ProductDto removeCategoryFromProduct( @WebParam( name = "productId" ) int productId,
+                                                 @WebParam( name = "categoryId" ) int categoryId ) {
+        Product product = ProductService.deleteCategoryFromProduct( productId, categoryId );
+        return new ProductDto( product );
+    }
 }
