@@ -1,15 +1,12 @@
 package gov.iti.jets.domain.models;
 
-import jakarta.json.bind.annotation.JsonbPropertyOrder;
 import jakarta.persistence.*;
-import jakarta.xml.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@JsonbPropertyOrder( {"id", "name", "description", "price", "categories"} )
 public class Product {
 
     @Id
@@ -20,10 +17,10 @@ public class Product {
     private int quantity;
     private BigDecimal price;
     @ManyToMany( fetch = FetchType.EAGER )
-    private Set<Category> categories;
+    private Set<Category> categories = new HashSet<>();
 
     public Product() {
-        this.categories = new HashSet<>();
+
     }
 
     public Product( String name, String description, int quantity, BigDecimal price ) {
@@ -31,7 +28,6 @@ public class Product {
         this.description = description;
         this.quantity = quantity;
         this.price = price;
-        this.categories = new HashSet<>();
     }
 
     public int getQuantity() {
@@ -74,7 +70,6 @@ public class Product {
         this.price = price;
     }
 
-    @XmlTransient
     public Set<Category> getCategories() {
         return categories;
     }

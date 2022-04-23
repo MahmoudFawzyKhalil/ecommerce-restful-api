@@ -6,7 +6,7 @@ import gov.iti.jets.rest.utils.ValidationUtil;
 import java.util.Objects;
 
 public class CategoryValidator {
-    public static void ensureCategoryRequestIsValid( CategoryRequest categoryRequest ) {
+    public static void validate( CategoryRequest categoryRequest ) {
         if ( Objects.isNull( categoryRequest ) )
             throw new ApiException( "You must provide a request body.", 400 );
 

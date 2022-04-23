@@ -7,8 +7,6 @@ import gov.iti.jets.domain.exceptions.BusinessException;
 import gov.iti.jets.domain.models.Category;
 import gov.iti.jets.persistence.CategoryRepository;
 import gov.iti.jets.persistence.JpaUtil;
-import gov.iti.jets.rest.resources.product.ProductFilters;
-import gov.iti.jets.rest.resources.product.ProductResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +34,7 @@ public class CategoryService {
         }
     }
 
-    public static void createNewCategory( Category category ) {
+    public static void createCategory( Category category ) {
         var em = JpaUtil.createEntityManager();
         var tx = em.getTransaction();
         tx.begin();

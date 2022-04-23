@@ -1,22 +1,17 @@
 package gov.iti.jets.soap.services;
 
-import gov.iti.jets.domain.exceptions.BusinessException;
 import gov.iti.jets.domain.models.Category;
 import gov.iti.jets.domain.services.CategoryService;
 import gov.iti.jets.soap.exceptions.SOAPApiException;
-import gov.iti.jets.soap.services.dtos.CategoryCreationDto;
 import gov.iti.jets.soap.services.dtos.CategoryDto;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebResult;
 import jakarta.jws.WebService;
-import jakarta.xml.soap.SOAPException;
 import jakarta.xml.ws.BindingType;
 import jakarta.xml.ws.soap.SOAPBinding;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 
@@ -55,7 +50,7 @@ public class InventoryManagement {
     @WebResult( name = "category" )
     public CategoryDto createCategory( @WebParam( name = "category" ) CategoryDto categoryDto ) {
         Category category = new Category( categoryDto.getName() );
-        CategoryService.createNewCategory( category );
+        CategoryService.createCategory( category );
         return new CategoryDto( category );
     }
 

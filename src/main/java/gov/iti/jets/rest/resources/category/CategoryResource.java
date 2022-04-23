@@ -44,11 +44,11 @@ public class CategoryResource {
 
     @POST
     public Response createCategory( CategoryRequest categoryRequest ) {
-        CategoryValidator.ensureCategoryRequestIsValid( categoryRequest );
+        CategoryValidator.validate( categoryRequest );
 
         Category category = new Category( categoryRequest.getName() );
 
-        CategoryService.createNewCategory( category );
+        CategoryService.createCategory( category );
 
         CategoryResponse categoryResponse = new CategoryResponse( category.getId(), category.getName() );
         addLinksToCategoryResponse( categoryResponse );
@@ -78,7 +78,7 @@ public class CategoryResource {
     @PUT
     @Path( "{id}" )
     public Response updateCategory( @PathParam( "id" ) int id, CategoryRequest categoryRequest ) {
-        CategoryValidator.ensureCategoryRequestIsValid( categoryRequest );
+        CategoryValidator.validate( categoryRequest );
 
         Category category = new Category( categoryRequest.getName() );
         category.setId( id );

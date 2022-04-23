@@ -11,6 +11,7 @@ import jakarta.ws.rs.core.Link;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 
+import java.net.URI;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -49,23 +50,28 @@ public class ProductResource {
         productResponse.getCategories().forEach( cr -> CategoryResource.addLinksToCategoryResponse( cr, uriInfo ) );
     }
 
-    /*
     @POST
-    public Response createCategory( CategoryRequest categoryRequest ) {
-        CategoryValidator.ensureCategoryRequestIsValid( categoryRequest );
+    public Response createProduct( ProductRequest productRequest ) {
+        ProductValidator.validate( productRequest );
 
-        Category category = new Category( categoryRequest.getName() );
+        System.out.println(productRequest);
 
-        CategoryService.createNewCategory( category );
+        Product product = new Product( productRequest.getName(),
+                productRequest.getDescription(),
+                productRequest.getQuantity(),
+                productRequest.getPrice() );
 
-        CategoryResponse categoryResponse = new CategoryResponse( category.getId(), category.getName() );
-        addLinksToProductResponseWithoutIdPathParam( categoryResponse );
+        ProductService.createProduct( product );
 
-        URI createdAtUri = ApiUtils.getCreatedAtUriForPostRequest( uriInfo, categoryResponse.getId() );
+        ProductResponse productResponse = new ProductResponse( product );
+        addLinksToProductResponse( productResponse );
 
-        return Response.created( createdAtUri ).entity( categoryResponse ).build();
+        URI createdAtUri = ApiUtils.getCreatedAtUriForPostRequest( uriInfo, productResponse.getId() );
+
+        return Response.created( createdAtUri ).entity( productResponse ).build();
     }
 
+/*
     @GET
     @Path( "{id}" )
     public Response findCategoryById( @PathParam( "id" ) int id ) {
