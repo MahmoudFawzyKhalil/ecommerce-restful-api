@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
+@SuppressWarnings( "NonJaxWsWebServices" )
 @WebService( targetNamespace = "http://www.jets.gov.iti.eg/ecommerce",
         name = "UserManagement",
         portName = "UserManagementPort",
@@ -56,9 +57,13 @@ public class UserManagement {
     @WebMethod
     @WebResult( name = "user" )
     public UserDto findUserById( @WebParam( name = "userId" ) int userId ) {
-        UserDto userDto = UserService.findUserById( userId ).map( UserDto::new ).orElseThrow( () -> new SOAPApiException( "No user exists with the id " + userId ) );
+        return UserService.findUserById( userId ).map( UserDto::new ).orElseThrow( () -> new SOAPApiException( "No user exists with the id " + userId ) );
+    }
 
-        return userDto;
+    @WebMethod
+    @WebResult( name = "user" )
+    public void deleteUser( @WebParam( name = "userId" ) int userId ) {
+        UserService.deleteUser( userId );
     }
 
 }
