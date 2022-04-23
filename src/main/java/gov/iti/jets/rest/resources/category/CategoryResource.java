@@ -2,14 +2,22 @@ package gov.iti.jets.rest.resources.category;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import gov.iti.jets.domain.models.Product;
+import gov.iti.jets.domain.services.ProductService;
 import gov.iti.jets.rest.exceptions.ApiException;
+import gov.iti.jets.rest.resources.product.ProductResource;
+import gov.iti.jets.rest.resources.product.ProductResponse;
+import gov.iti.jets.rest.resources.product.ProductResponseWrapper;
 import gov.iti.jets.rest.utils.ApiUtils;
 import gov.iti.jets.rest.beans.PaginationData;
 import gov.iti.jets.domain.models.Category;
 import gov.iti.jets.domain.services.CategoryService;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
+
+import static java.util.stream.Collectors.*;
 
 @Path( "categories" )
 @Consumes( {"application/json; qs=1", "application/xml; qs=0.75"} )
@@ -23,7 +31,7 @@ public class CategoryResource {
 
         List<CategoryResponse> categoryResponses = CategoryService.findCategoryResponses( paginationData, filters );
 
-        categoryResponses.forEach( this::addLinksToCategoryResponse );
+        categoryResponses.forEach( cr -> addLinksToCategoryResponse( cr, uriInfo ) );
 
         ApiUtils.nullifyListFieldsForPartialResponse( categoryResponses, fieldsWanted, CategoryResponse.class );
 
@@ -34,12 +42,15 @@ public class CategoryResource {
         return Response.ok().entity( categoryResponseWrapper ).build();
     }
 
-    private void addLinksToCategoryResponse( CategoryResponse categoryResponse ) {
-        addLinksToCategoryResponse( categoryResponse, uriInfo );
-    }
-
     public static void addLinksToCategoryResponse( CategoryResponse categoryResponse, UriInfo uriInfo ) {
         categoryResponse.addLink( ApiUtils.createSelfLink( uriInfo, categoryResponse.getId(), CategoryResource.class ) );
+
+        Link products = Link.fromUriBuilder( uriInfo.getBaseUriBuilder()
+                .path( CategoryResource.class )
+                .path( String.valueOf( categoryResponse.getId() ) )
+                .path( ProductResource.class ) ).rel( "products" ).build();
+
+        categoryResponse.addLink( products );
     }
 
     @POST
@@ -51,7 +62,7 @@ public class CategoryResource {
         CategoryService.createCategory( category );
 
         CategoryResponse categoryResponse = new CategoryResponse( category.getId(), category.getName() );
-        addLinksToCategoryResponse( categoryResponse );
+        addLinksToCategoryResponse( categoryResponse, uriInfo );
 
         URI createdAtUri = ApiUtils.getCreatedAtUriForPostRequest( uriInfo, categoryResponse.getId() );
 
@@ -64,7 +75,7 @@ public class CategoryResource {
         Category category = CategoryService.findCategoryById( id ).orElseThrow( () -> new ApiException(
                 String.format( "No category exists with the id (%s)", id ), 400 ) );
         CategoryResponse categoryResponse = new CategoryResponse( category );
-        addLinksToCategoryResponse( categoryResponse );
+        addLinksToCategoryResponse( categoryResponse, uriInfo );
         return Response.ok().entity( categoryResponse ).build();
     }
 
@@ -87,8 +98,26 @@ public class CategoryResource {
 
         CategoryResponse categoryResponse = new CategoryResponse( category.getId(), category.getName() );
 
-        addLinksToCategoryResponse( categoryResponse );
+        addLinksToCategoryResponse( categoryResponse, uriInfo );
 
         return Response.ok().entity( categoryResponse ).build();
+    }
+
+    @GET
+    @Path( "{id}/products" )
+    public Response getAllProductsForCategory( @PathParam( "id" ) int id ) {
+        List<ProductResponse> productResponses = ProductService.getAllProductsForCategory( id )
+                .stream()
+                .map( ProductResponse::new )
+                .collect( toList() );
+
+        if ( productResponses.isEmpty() )
+            throw new ApiException( String.format( "No products exist for category with id (%s). Does this category exist?", id ), 400 );
+
+        productResponses.forEach( pr -> ProductResource.addLinksToProductResponse( pr, uriInfo ) );
+        Link self = ApiUtils.createAbsoluteSelfLink( uriInfo );
+        ProductResponseWrapper productResponseWrapper = new ProductResponseWrapper( productResponses, List.of( self ) );
+
+        return Response.ok().entity( productResponseWrapper ).build();
     }
 }

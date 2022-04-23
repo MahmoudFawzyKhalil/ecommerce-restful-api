@@ -2,8 +2,11 @@ package gov.iti.jets.soap.services;
 
 import gov.iti.jets.domain.models.Category;
 import gov.iti.jets.domain.services.CategoryService;
+import gov.iti.jets.domain.services.ProductService;
+import gov.iti.jets.rest.resources.product.ProductResource;
 import gov.iti.jets.soap.exceptions.SOAPApiException;
 import gov.iti.jets.soap.services.dtos.CategoryDto;
+import gov.iti.jets.soap.services.dtos.ProductDto;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebResult;
@@ -12,6 +15,7 @@ import jakarta.xml.ws.BindingType;
 import jakarta.xml.ws.soap.SOAPBinding;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.*;
 
@@ -67,7 +71,19 @@ public class InventoryManagement {
         CategoryService.deleteCategory( id );
     }
 
-//    @WebMethod
-//    @WebResult( name = "product" )
-//    public List<ProductDto>
+    @WebMethod
+    @WebResult( name = "product" )
+    public List<ProductDto> getAllProductsForCategory( int id ) {
+        return ProductService.getAllProductsForCategory( id )
+                .stream().map( ProductDto::new )
+                .collect( toList() );
+    }
+
+    @WebMethod
+    @WebResult( name = "product" )
+    public List<ProductDto> getAllProducts() {
+        return ProductService.getAllProducts().stream()
+                .map( ProductDto::new )
+                .collect( toList() );
+    }
 }

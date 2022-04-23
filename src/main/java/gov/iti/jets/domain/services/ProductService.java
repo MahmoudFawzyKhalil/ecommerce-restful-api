@@ -9,6 +9,7 @@ import gov.iti.jets.persistence.ProductRepository;
 import gov.iti.jets.rest.beans.PaginationData;
 import gov.iti.jets.rest.resources.product.ProductFilters;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -140,6 +141,28 @@ public class ProductService {
             tx.commit();
 
             return product;
+        } finally {
+            em.close();
+        }
+    }
+
+    public static List<Product> getAllProductsForCategory( int categoryId ) {
+        var em = JpaUtil.createEntityManager();
+        var pr = new ProductRepository( em );
+
+        try {
+            return pr.findProductsForCategory( categoryId );
+        } finally {
+            em.close();
+        }
+    }
+
+    public static List<Product> getAllProducts() {
+        var em = JpaUtil.createEntityManager();
+        var pr = new ProductRepository( em );
+
+        try {
+            return pr.findAll();
         } finally {
             em.close();
         }

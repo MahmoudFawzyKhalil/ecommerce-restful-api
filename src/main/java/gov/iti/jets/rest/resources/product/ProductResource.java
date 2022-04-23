@@ -32,14 +32,15 @@ public class ProductResource {
         List<ProductResponse> productResponses = products.stream()
                 .map( ProductResponse::new )
                 .collect( toList() );
-        productResponses.forEach( this::addLinksToProductResponse );
+        productResponses.forEach( pr -> addLinksToProductResponse( pr, uriInfo ) );
         ApiUtils.nullifyListFieldsForPartialResponse( productResponses, fieldsWanted, ProductResponse.class );
         List<Link> links = ApiUtils.createPaginatedResourceLinks( uriInfo, paginationData, ProductService.getNumberOfCategories() );
         ProductResponseWrapper productResponseWrapper = new ProductResponseWrapper( productResponses, links );
         return Response.ok().entity( productResponseWrapper ).build();
     }
 
-    private void addLinksToProductResponse( ProductResponse productResponse ) {
+
+    public static void addLinksToProductResponse( ProductResponse productResponse, UriInfo uriInfo ) {
         productResponse.addLink( ApiUtils.createSelfLink( uriInfo, productResponse.getId(), ProductResource.class ) );
         productResponse.getCategories().forEach( cr -> CategoryResource.addLinksToCategoryResponse( cr, uriInfo ) );
     }
@@ -54,7 +55,7 @@ public class ProductResource {
                 productRequest.getPrice() );
         ProductService.createProduct( product );
         ProductResponse productResponse = new ProductResponse( product );
-        addLinksToProductResponse( productResponse );
+        addLinksToProductResponse( productResponse, uriInfo );
         URI createdAtUri = ApiUtils.getCreatedAtUriForPostRequest( uriInfo, productResponse.getId() );
         return Response.created( createdAtUri ).entity( productResponse ).build();
     }
@@ -65,7 +66,7 @@ public class ProductResource {
         Product product = ProductService.findProductById( id ).orElseThrow( () -> new ApiException(
                 String.format( "No product exists with the id (%s)", id ), 400 ) );
         ProductResponse productResponse = new ProductResponse( product );
-        addLinksToProductResponse( productResponse );
+        addLinksToProductResponse( productResponse, uriInfo );
         return Response.ok().entity( productResponse ).build();
     }
 
@@ -88,7 +89,7 @@ public class ProductResource {
         product.setId( id );
         ProductService.updateProduct( product );
         ProductResponse productResponse = new ProductResponse( product );
-        addLinksToProductResponse( productResponse );
+        addLinksToProductResponse( productResponse, uriInfo );
         return Response.ok().entity( productResponse ).build();
     }
 
@@ -98,7 +99,7 @@ public class ProductResource {
                                           @PathParam( "cid" ) int categoryId ) {
         Product product = ProductService.addCategoryToProduct( productId, categoryId );
         ProductResponse productResponse = new ProductResponse( product );
-        addLinksToProductResponse( productResponse );
+        addLinksToProductResponse( productResponse, uriInfo );
         return Response.ok( productResponse ).build();
     }
 
@@ -109,7 +110,7 @@ public class ProductResource {
                                                @PathParam( "cid" ) int categoryId ) {
         Product product = ProductService.deleteCategoryFromProduct( productId, categoryId );
         ProductResponse productResponse = new ProductResponse( product );
-        addLinksToProductResponse( productResponse );
+        addLinksToProductResponse( productResponse, uriInfo );
         return Response.ok( productResponse ).build();
     }
 

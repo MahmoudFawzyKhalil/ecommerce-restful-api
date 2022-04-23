@@ -32,4 +32,10 @@ public class ProductRepository extends AbstractRepository<Product> {
                         Long.class )
                 .getSingleResult();
     }
+
+    public List<Product> findProductsForCategory( int categoryId ) {
+        return entityManager.createQuery( "SELECT c.products FROM Category c WHERE c.id = :cid", Product.class )
+                .setParameter( "cid", categoryId )
+                .getResultList();
+    }
 }
