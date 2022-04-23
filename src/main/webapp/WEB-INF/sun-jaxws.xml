@@ -7,4 +7,8 @@
               implementation="gov.iti.jets.soap.services.InventoryManagement"
               url-pattern="/ws/InventoryManagement"/>
 
+    <endpoint name="UserManagement"
+              implementation="gov.iti.jets.soap.services.UserManagement"
+              url-pattern="/ws/UserManagement"/>
+
 </endpoints>

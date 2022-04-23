@@ -206,4 +206,15 @@ public class UserService {
             em.close();
         }
     }
+
+    public static List<User> getAllUsers() {
+        var em = JpaUtil.createEntityManager();
+
+        try {
+            var ur = new UserRepository( em );
+            return ur.findAll();
+        } finally {
+            em.close();
+        }
+    }
 }
