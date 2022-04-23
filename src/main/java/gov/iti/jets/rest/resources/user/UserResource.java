@@ -84,21 +84,25 @@ public class UserResource {
         return Response.noContent().build();
     }
 
-    /*
     @PUT
     @Path( "{id}" )
-    public Response updateProduct( @PathParam( "id" ) int id, ProductRequest productRequest ) {
-        ProductValidator.validate( productRequest );
-        Product product = new Product( productRequest.getName(),
-                productRequest.getDescription(),
-                productRequest.getQuantity(),
-                productRequest.getPrice() );
-        product.setId( id );
-        ProductService.updateProduct( product );
-        ProductResponse productResponse = new ProductResponse( product );
-        addLinksToProductResponse( productResponse, uriInfo );
-        return Response.ok().entity( productResponse ).build();
+    public Response updateUser( @PathParam( "id" ) int id, UserRequest userRequest ) {
+        if ( userRequest == null )
+            throw new ApiException( "You must provide a valid POST request body.", 400 );
+
+        User user = new User( userRequest.getFirstName(),
+                userRequest.getLastName(),
+                userRequest.getEmail(),
+                userRequest.getRole() );
+        user.setId( id );
+
+        UserService.updateUser( user );
+        UserResponse userResponse = new UserResponse( user );
+        addLinksToUserResponse( userResponse, uriInfo );
+        return Response.ok().entity( userResponse ).build();
     }
+
+        /*
 
     @POST
     @Path( "{pid}/categories/{cid}" )

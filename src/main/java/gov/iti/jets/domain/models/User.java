@@ -123,4 +123,11 @@ public class User {
                 ", cart=" + cart.getId() +
                 '}';
     }
+
+    public void update( User updatedUser ) {
+        this.firstName = updatedUser.getFirstName();
+        this.lastName = updatedUser.getLastName();
+        this.email = updatedUser.getEmail();
+        this.role = updatedUser.getRole();
+    }
 }

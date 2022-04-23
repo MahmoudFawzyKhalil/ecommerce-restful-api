@@ -80,4 +80,21 @@ public class UserService {
             em.close();
         }
     }
+
+    public static void updateUser( User updatedUser ) {
+        var em = JpaUtil.createEntityManager();
+        var tx = em.getTransaction();
+
+        try {
+            tx.begin();
+            var ur = new UserRepository( em );
+            ur.findOne( updatedUser.getId() ).ifPresentOrElse( ( user ) -> {
+                user.update( updatedUser );
+                ur.update( user );
+            }, () -> ur.update( updatedUser ) );
+            tx.commit();
+        } finally {
+            em.close();
+        }
+    }
 }
