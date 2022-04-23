@@ -6,12 +6,10 @@ import gov.iti.jets.rest.exceptions.ApiException;
 import gov.iti.jets.rest.resources.cart.CartResponse;
 import gov.iti.jets.soap.exceptions.SOAPApiException;
 import gov.iti.jets.soap.services.dtos.CartDto;
+import gov.iti.jets.soap.services.dtos.CartLineItemRequestDto;
 import gov.iti.jets.soap.services.dtos.UserDto;
 import gov.iti.jets.soap.services.dtos.UserRequestDto;
-import jakarta.jws.WebMethod;
-import jakarta.jws.WebParam;
-import jakarta.jws.WebResult;
-import jakarta.jws.WebService;
+import jakarta.jws.*;
 import jakarta.ws.rs.core.Response;
 import jakarta.xml.ws.BindingType;
 import jakarta.xml.ws.soap.SOAPBinding;
@@ -65,15 +63,22 @@ public class UserManagement {
     }
 
     @WebMethod
-    @WebResult( name = "user" )
+    @Oneway
     public void deleteUser( @WebParam( name = "userId" ) int userId ) {
         UserService.deleteUser( userId );
     }
 
     @WebMethod
-    @WebResult( name = "user" )
+    @WebResult( name = "cart" )
     public CartDto getCartByUserId( @WebParam( name = "userId" ) int userId ) {
         return UserService.findCartByUserId( userId ).map( CartDto::new ).orElseThrow( () ->
                 new SOAPApiException( String.format( "No user exists with the id (%s)", userId ) ) );
+    }
+
+    @WebMethod
+    @WebResult( name = "cart" )
+    public CartDto addItemToUserCart( @WebParam( name = "userId" ) int userId, @WebParam( name = "cartLineItem" ) CartLineItemRequestDto dto ) {
+        var cart = UserService.addItemToUserCart( userId, dto.getProductId(), dto.getQuantity() );
+        return new CartDto( cart );
     }
 }

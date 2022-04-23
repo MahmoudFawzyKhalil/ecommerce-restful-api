@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class DatabasePopulator {
-    public static void main1( String[] args ) {
+    public static void main( String[] args ) {
         var em = JpaUtil.createEntityManager();
         var tx = em.getTransaction();
         tx.begin();
@@ -47,15 +47,4 @@ public class DatabasePopulator {
         JpaUtil.closeEntityManagerFactory();
     }
 
-    public static void main( String[] args ) {
-        var em = JpaUtil.createEntityManager();
-        EntityTransaction tx = em.getTransaction();
-        tx.begin();
-//        List<User> u = em.createQuery( "SELECT u FROM User u ORDER BY u.id", User.class ).getResultList();
-        var u = em.find( User.class, 1 );
-        em.close();
-        tx.commit();
-        System.out.println( u.getCart() );
-//        em.find( User.class, 1 );
-    }
 }
