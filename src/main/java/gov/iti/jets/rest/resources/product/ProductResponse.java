@@ -114,7 +114,6 @@ public class ProductResponse implements Serializable {
         links.add( link );
     }
 
-
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(" +

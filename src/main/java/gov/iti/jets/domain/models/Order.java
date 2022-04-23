@@ -3,6 +3,7 @@ package gov.iti.jets.domain.models;
 import gov.iti.jets.domain.enums.OrderStatus;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -13,7 +14,7 @@ public class Order {
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private int id;
 
-    @OneToMany( mappedBy = "order", fetch = FetchType.EAGER )
+    @OneToMany( mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true )
     private Set<OrderLineItem> orderLineItems;
 
     @ManyToOne
@@ -22,17 +23,29 @@ public class Order {
     @Enumerated( EnumType.STRING )
     private OrderStatus status;
 
+    private BigDecimal total;
+
     public Order() {
     }
 
-    public Order( Cart cart ) {
-        this.orderLineItems = createOrderLineItemsFromCart( cart );
-        this.customer = cart.getOwner();
+    public Order( User user ) {
+        this.orderLineItems = createOrderLineItemsFromCart( user.getCart() );
+        this.total = calculateTotal();
+        this.customer = user;
         this.status = OrderStatus.PENDING;
     }
 
+    private BigDecimal calculateTotal() {
+        return orderLineItems.stream()
+                .map( OrderLineItem::getTotal )
+                .reduce( BigDecimal.ZERO, BigDecimal::add );
+    }
+
     private Set<OrderLineItem> createOrderLineItemsFromCart( Cart cart ) {
-        return cart.getLineItems().stream().map( OrderLineItem::new ).collect( Collectors.toSet() );
+        return cart.getLineItems().stream()
+                .map( OrderLineItem::new )
+                .peek( i -> i.setOrder( this ) )
+                .collect( Collectors.toSet() );
     }
 
     public User getCustomer() {
@@ -72,6 +85,13 @@ public class Order {
         cartLineItem.setOrder( this );
     }
 
+    public BigDecimal getTotal() {
+        return total;
+    }
+
+    public void setTotal( BigDecimal total ) {
+        this.total = total;
+    }
 
     @Override
     public String toString() {

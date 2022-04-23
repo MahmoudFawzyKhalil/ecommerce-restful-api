@@ -9,7 +9,6 @@ import gov.iti.jets.persistence.ProductRepository;
 import gov.iti.jets.rest.beans.PaginationData;
 import gov.iti.jets.rest.resources.product.ProductFilters;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,12 +25,12 @@ public class ProductService {
         }
     }
 
-    public static long getNumberOfCategories() {
+    public static long getNumberOfProducts() {
         var em = JpaUtil.createEntityManager();
 
         try {
             var pr = new ProductRepository( em );
-            return pr.getNumberOfCategories();
+            return pr.getNumberOfProducts();
         } finally {
             em.close();
         }

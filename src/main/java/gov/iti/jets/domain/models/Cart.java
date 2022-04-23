@@ -13,7 +13,8 @@ public class Cart {
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private int id;
 
-    @OneToMany( fetch = FetchType.EAGER, mappedBy = "cart" )
+    // TODO lazy now
+    @OneToMany( fetch = FetchType.LAZY, mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true )
     private Set<CartLineItem> cartLineItems = new HashSet<>();
 
     @OneToOne
@@ -51,5 +52,9 @@ public class Cart {
                 ", cartLineItems=" + cartLineItems +
                 ", owner=" + owner.getEmail() +
                 '}';
+    }
+
+    public void empty() {
+        cartLineItems.clear();
     }
 }

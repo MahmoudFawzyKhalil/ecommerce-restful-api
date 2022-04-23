@@ -2,7 +2,6 @@ package gov.iti.jets.persistence;
 
 import gov.iti.jets.domain.models.Product;
 import gov.iti.jets.rest.beans.PaginationData;
-import gov.iti.jets.rest.resources.category.CategoryResponse;
 import gov.iti.jets.rest.resources.product.ProductFilters;
 import jakarta.persistence.EntityManager;
 
@@ -27,7 +26,7 @@ public class ProductRepository extends AbstractRepository<Product> {
                 .getResultList();
     }
 
-    public long getNumberOfCategories() {
+    public long getNumberOfProducts() {
         return entityManager.createQuery( "SELECT COUNT (p) FROM Product p",
                         Long.class )
                 .getSingleResult();

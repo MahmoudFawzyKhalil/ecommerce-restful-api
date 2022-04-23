@@ -2,6 +2,9 @@ package gov.iti.jets.domain.models;
 
 import gov.iti.jets.domain.enums.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,21 +13,31 @@ import java.util.List;
 @Table( name = "users" )
 public class User {
 
-    @OneToMany( mappedBy = "customer" )
-    List<Order> orders;
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     private int id;
+
+    @NotEmpty(message = "you must provide a first name.")
     private String firstName;
+
+    @NotEmpty(message = "you must provide a last name.")
     private String lastName;
+
+    @NotEmpty(message = "you must provide an email.")
+    @Email(message = "email is not valid.")
     private String email;
+
     @Enumerated( EnumType.STRING )
+    @NotNull(message = "you must provide a role.")
     private Role role;
-    @OneToOne( mappedBy = "owner" )
+
+    @OneToOne( mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY )
     private Cart cart;
 
+    @OneToMany( mappedBy = "customer" )
+    List<Order> orders;
+
     public User() {
-        orders = new ArrayList<>();
     }
 
     public User( String firstName, String lastName, String email, Role role ) {
@@ -33,6 +46,7 @@ public class User {
         this.email = email;
         this.role = role;
         this.orders = new ArrayList<>();
+        setCart( new Cart() );
     }
 
     public List<Order> getOrders() {

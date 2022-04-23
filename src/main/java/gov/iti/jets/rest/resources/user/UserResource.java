@@ -1,10 +1,9 @@
-package gov.iti.jets.rest.resources.product;
+package gov.iti.jets.rest.resources.user;
 
-import gov.iti.jets.domain.models.Product;
-import gov.iti.jets.domain.services.ProductService;
+import gov.iti.jets.domain.models.User;
+import gov.iti.jets.domain.services.UserService;
 import gov.iti.jets.rest.beans.PaginationData;
 import gov.iti.jets.rest.exceptions.ApiException;
-import gov.iti.jets.rest.resources.category.*;
 import gov.iti.jets.rest.utils.ApiUtils;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -17,49 +16,57 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-@Path( "products" )
+@Path( "users" )
 @Consumes( {"application/json; qs=1", "application/xml; qs=0.75"} )
 @Produces( {"application/json; qs=1", "application/xml; qs=0.75"} )
-public class ProductResource {
+public class UserResource {
     @Context
     private UriInfo uriInfo;
 
+
     @GET
-    public Response getAllProducts( @BeanParam PaginationData paginationData,
-                                    @BeanParam ProductFilters filters,
-                                    @QueryParam( "fields" ) List<String> fieldsWanted ) {
-        List<Product> products = ProductService.findProducts( paginationData, filters );
-        List<ProductResponse> productResponses = products.stream()
-                .map( ProductResponse::new )
+    public Response getAllUsers( @BeanParam PaginationData paginationData,
+                                 @QueryParam( "fields" ) List<String> fieldsWanted ) {
+
+        List<User> users = UserService.findUsers( paginationData );
+
+        List<UserResponse> userResponses = users.stream()
+                .map( UserResponse::new )
                 .collect( toList() );
-        productResponses.forEach( pr -> addLinksToProductResponse( pr, uriInfo ) );
-        ApiUtils.nullifyListFieldsForPartialResponse( productResponses, fieldsWanted, ProductResponse.class );
-        List<Link> links = ApiUtils.createPaginatedResourceLinks( uriInfo, paginationData, ProductService.getNumberOfProducts() );
-        ProductResponseWrapper productResponseWrapper = new ProductResponseWrapper( productResponses, links );
-        return Response.ok().entity( productResponseWrapper ).build();
+        userResponses.forEach( ur -> addLinksToUserResponse( ur, uriInfo ) );
+
+        ApiUtils.nullifyListFieldsForPartialResponse( userResponses, fieldsWanted, UserResponse.class );
+
+        List<Link> links = ApiUtils.createPaginatedResourceLinks( uriInfo, paginationData, UserService.getNumberOfUsers() );
+
+        UserResponseWrapper userResponseWrapper = new UserResponseWrapper( userResponses, links );
+
+        return Response.ok().entity( userResponseWrapper ).build();
     }
 
 
-    public static void addLinksToProductResponse( ProductResponse productResponse, UriInfo uriInfo ) {
-        productResponse.addLink( ApiUtils.createSelfLink( uriInfo, productResponse.getId(), ProductResource.class ) );
-        productResponse.getCategories().forEach( cr -> CategoryResource.addLinksToCategoryResponse( cr, uriInfo ) );
+    public static void addLinksToUserResponse( UserResponse userResponse, UriInfo uriInfo ) {
+        userResponse.addLink( ApiUtils.createSelfLink( uriInfo, userResponse.getId(), UserResource.class ) );
     }
+
 
     @POST
-    public Response createProduct( ProductRequest productRequest ) {
-        ProductValidator.validate( productRequest );
-        System.out.println( productRequest );
-        Product product = new Product( productRequest.getName(),
-                productRequest.getDescription(),
-                productRequest.getQuantity(),
-                productRequest.getPrice() );
-        ProductService.createProduct( product );
-        ProductResponse productResponse = new ProductResponse( product );
-        addLinksToProductResponse( productResponse, uriInfo );
-        URI createdAtUri = ApiUtils.getCreatedAtUriForPostRequest( uriInfo, productResponse.getId() );
-        return Response.created( createdAtUri ).entity( productResponse ).build();
-    }
+    public Response createProduct( UserRequest userRequest ) {
+        if ( userRequest == null )
+            throw new ApiException( "You must provide a valid POST request body.", 400 );
 
+        User user = new User( userRequest.getFirstName(),
+                userRequest.getLastName(),
+                userRequest.getEmail(),
+                userRequest.getRole() );
+
+        UserService.createUser( user );
+        UserResponse userResponse = new UserResponse( user );
+        addLinksToUserResponse( userResponse, uriInfo );
+        URI createdAtUri = ApiUtils.getCreatedAtUriForPostRequest( uriInfo, userResponse.getId() );
+        return Response.created( createdAtUri ).entity( userResponse ).build();
+    }
+    /*
     @GET
     @Path( "{id}" )
     public Response findProductById( @PathParam( "id" ) int id ) {
@@ -113,5 +120,6 @@ public class ProductResource {
         addLinksToProductResponse( productResponse, uriInfo );
         return Response.ok( productResponse ).build();
     }
+    */
 
 }
