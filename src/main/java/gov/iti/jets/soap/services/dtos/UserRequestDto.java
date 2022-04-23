@@ -2,6 +2,7 @@ package gov.iti.jets.soap.services.dtos;
 
 import gov.iti.jets.domain.enums.Role;
 import gov.iti.jets.domain.models.User;
+import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
 
@@ -27,6 +28,7 @@ public class UserRequestDto implements Serializable {
         this.id = id;
     }
 
+    @XmlElement(required = true)
     public String getFirstName() {
         return firstName;
     }
@@ -35,6 +37,7 @@ public class UserRequestDto implements Serializable {
         this.firstName = firstName;
     }
 
+    @XmlElement(required = true)
     public String getLastName() {
         return lastName;
     }
@@ -43,6 +46,7 @@ public class UserRequestDto implements Serializable {
         this.lastName = lastName;
     }
 
+    @XmlElement(required = true)
     public String getEmail() {
         return email;
     }
@@ -51,6 +55,7 @@ public class UserRequestDto implements Serializable {
         this.email = email;
     }
 
+    @XmlElement(required = true)
     public Role getRole() {
         return role;
     }
@@ -59,4 +64,14 @@ public class UserRequestDto implements Serializable {
         this.role = role;
     }
 
+    @Override
+    public String toString() {
+        return "UserRequestDto{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", role=" + role +
+                '}';
+    }
 }

@@ -1,7 +1,10 @@
 package gov.iti.jets.soap.services;
 
+import gov.iti.jets.domain.models.User;
 import gov.iti.jets.domain.services.UserService;
+import gov.iti.jets.soap.exceptions.SOAPApiException;
 import gov.iti.jets.soap.services.dtos.UserDto;
+import gov.iti.jets.soap.services.dtos.UserRequestDto;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebResult;
@@ -35,5 +38,27 @@ public class UserManagement {
                 .collect( Collectors.toList() );
     }
 
+    @WebMethod
+    @WebResult( name = "user" )
+    public UserDto createOrUpdateUser( @WebParam( name = "user" ) UserRequestDto userRequestDto ) {
+        System.out.println( userRequestDto );
+        User user = new User( userRequestDto.getFirstName(),
+                userRequestDto.getLastName(),
+                userRequestDto.getEmail(),
+                userRequestDto.getRole() );
+        if ( userRequestDto.getId() != null ) {
+            user.setId( userRequestDto.getId() );
+        }
+        UserService.updateUser( user );
+        return new UserDto( user );
+    }
+
+    @WebMethod
+    @WebResult( name = "user" )
+    public UserDto findUserById( @WebParam( name = "userId" ) int userId ) {
+        UserDto userDto = UserService.findUserById( userId ).map( UserDto::new ).orElseThrow( () -> new SOAPApiException( "No user exists with the id " + userId ) );
+
+        return userDto;
+    }
 
 }
