@@ -11,7 +11,8 @@ This software project was built using a layered architecture. The two APIs are d
 🧼[SOAP-UI project](https://github.com/MahmoudFawzyKhalil/rest-soap-ecommerce-web-service/blob/main/src/main/resources/SoapUI/soapui-project.xml)
 
 # 📦 Features
-* Partial response
+* Filtering
+* Partial response using reflection
 * Pagination
 * HATEOAS
 * Custom ExceptionMappers
