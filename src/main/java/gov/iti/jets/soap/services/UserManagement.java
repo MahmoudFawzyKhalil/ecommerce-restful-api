@@ -1,6 +1,9 @@
 package gov.iti.jets.soap.services;
 
+import gov.iti.jets.domain.enums.OrderStatus;
+import gov.iti.jets.domain.models.Order;
 import gov.iti.jets.domain.models.User;
+import gov.iti.jets.domain.services.OrderService;
 import gov.iti.jets.domain.services.UserService;
 import gov.iti.jets.rest.exceptions.ApiException;
 import gov.iti.jets.rest.resources.cart.CartResponse;
@@ -95,4 +98,18 @@ public class UserManagement {
                 .collect( toList() );
     }
 
+    @WebMethod
+    @WebResult( name = "order" )
+    public OrderDto createOrderFromUserCart( @WebParam( name = "userId" ) int userId ) {
+        Order order = UserService.createOrderFromUserCart( userId );
+        return new OrderDto( order );
+    }
+
+    @WebMethod
+    @WebResult( name = "order" )
+    public OrderDto updateOrderStatus( @WebParam( name = "orderId" ) int orderId,
+                                       @WebParam( name = "newStatus" ) OrderStatus newStatus ) {
+        var order = OrderService.updateOrderStatus( orderId, newStatus );
+        return new OrderDto( order );
+    }
 }
